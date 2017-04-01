@@ -2,7 +2,6 @@
 var map;
 // Function to initialize the map within the map div
 function initMap() {
-    console.log("called");
     map = new google.maps.Map(document.getElementById('map'), {
         center: {
             lat: 40.74135,
@@ -25,7 +24,14 @@ function initMap() {
     });
 }
 
-$("#menu-toggle").click(function (e) {
-    e.preventDefault();
-    $("#wrapper").toggleClass("toggled");
-});
+var viewModel = function() {
+    var self = this;
+
+    self.toggle = ko.observable(true);
+
+    self.toggleMenu = function() {
+        self.toggle(!self.toggle());
+    };
+};
+
+ko.applyBindings(new viewModel());
