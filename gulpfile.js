@@ -25,7 +25,7 @@ gulp.task('minify-css', function () {
         .pipe(gulp.dest('dist/css'));
 });
 
-gulp.watch('src/*.js', ['minify-js']);
-gulp.watch('src/*css', ['minify-css']);
+gulp.watch('src/js/*.js', ['minify-js']);
+gulp.watch('src/css/*css', ['minify-css']);
 
 gulp.task('default', ['minify-js', 'minify-css']);
