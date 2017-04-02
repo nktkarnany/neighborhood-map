@@ -133,3 +133,7 @@ body {
         margin-right: 0;
     }
 }
+
+.modal-content > ul {
+    list-style: none;
+}

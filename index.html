@@ -32,6 +32,9 @@
                     <button class="btn btn-default">
                         <i class="glyphicon glyphicon-search"></i>
                     </button>
+                    <button class="btn btn-default" data-toggle="modal" data-target=".bs-example-modal-sm">
+                        <i class="glyphicon glyphicon-filter"></i>
+                    </button>
                 </div>
             </div>
             <ul class="sidebar-nav">
@@ -71,18 +74,34 @@
                     </div>
                 </div>
             </div>
+            <div data-bind="text: ko.toJSON($root)"></div>
         </div>
         <!-- /#page-content-wrapper -->
 
     </div>
     <!-- /#wrapper -->
 
+    <!-- Places types filter selection modal -->
+
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <ul data-bind="foreach: types">
+                    <li>
+                        <input type="checkbox" value="" data-bind="checkedValue: $data, checked: $parent.selectedTypes">
+                        <span data-bind="text: $data"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="dist/js/index.min.js" async defer></script>
+    <script src="dist/js/index.min.js"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" async defer></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBy8FLlJMTDb0ZDeYaezDM88XnSkouhbco&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBy8FLlJMTDb0ZDeYaezDM88XnSkouhbco&libraries=places&callback=initMap" async defer></script>
 
 </body>
 
