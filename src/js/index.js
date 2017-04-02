@@ -12,19 +12,6 @@ var model = {
 
 var viewModel = {
 
-    //search
-    //identify the first matching item by name
-    //viewModel.firstMatch = ko.computed(function() {
-    //    var search = this.search().toLowerCase();
-    //    if (!search) {
-    //        return null;
-    //    } else {
-    //        return ko.utils.arrayFirst(this.filteredItems(), function(item) {
-    //            return ko.utils.stringStartsWith(item.name().toLowerCase(), search);
-    //        });
-    //    }
-    //}, viewModel);
-
     currentPlace: ko.observable(model.currentPlace),
 
     toggle: ko.observable(true),
@@ -40,13 +27,29 @@ var viewModel = {
     places: ko.observableArray(model.places),
 
     showDetail: function (index) {
-        console.log(index);
+//        console.log(index);
     },
 
     hideDetail: function (index) {
-        console.log(index);
-    }
+//        console.log(index);
+    },
+
+    query: ko.observable('')
+
+//    search: function(value) {
+//        console.log(value);
+//
+//        viewModel.places.removeAll();
+//
+//        model.places.forEach(function(place){
+//            if(place.name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+//                viewModel.places.push(place);
+//              }
+//        });
+//    }
 };
+
+//viewModel.query.subscribe(viewModel.search);
 
 ko.applyBindings(viewModel);
 
@@ -114,6 +117,14 @@ function getPlaces() {
 
 function callback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
+        model.places = results;
         viewModel.places(results);
+
+        viewModel.places = ko.computed(function () {
+            var search = viewModel.query().toLowerCase();
+            return ko.utils.arrayFilter(model.places, function (place) {
+                return place.name.toLowerCase().indexOf(search) >= 0;
+            });
+        });
     }
 }

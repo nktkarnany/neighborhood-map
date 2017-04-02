@@ -27,7 +27,7 @@
                 </li>
             </ul>
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search">
+                <input type="text" class="form-control" placeholder="Search" data-bind="value: query, valueUpdate: 'keyup'">
                 <div class="input-group-btn">
                     <button class="btn btn-default">
                         <i class="glyphicon glyphicon-search"></i>
@@ -38,7 +38,7 @@
                 </div>
             </div>
             <ul class="sidebar-nav" data-bind="foreach: places">
-                <li><a data-bind="text: name, event: {mouseover: $parent.showMarker.bind($data, $index()), mouseout: $parent.hideMarker.bind($data, $index())}"></a></li>
+                <li><a data-bind="text: name, event: {mouseover: $parent.showDetail.bind($data, $index()), mouseout: $parent.hideDetail.bind($data, $index())}"></a></li>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
