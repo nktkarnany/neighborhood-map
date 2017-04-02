@@ -37,28 +37,8 @@
                     </button>
                 </div>
             </div>
-            <ul class="sidebar-nav">
-                <li>
-
-                </li>
-                <li>
-                    <a href="#">Shortcuts</a>
-                </li>
-                <li>
-                    <a href="#">Overview</a>
-                </li>
-                <li>
-                    <a href="#">Events</a>
-                </li>
-                <li>
-                    <a href="#">About</a>
-                </li>
-                <li>
-                    <a href="#">Services</a>
-                </li>
-                <li>
-                    <a href="#">Contact</a>
-                </li>
+            <ul class="sidebar-nav" data-bind="foreach: places">
+                <li><a data-bind="text: name, event: {mouseover: $parent.showMarker.bind($data, $index()), mouseout: $parent.hideMarker.bind($data, $index())}"></a></li>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -69,7 +49,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle" data-bind="click: toggleMenu"><i class="glyphicon glyphicon-menu-hamburger"></i></a>
-                        <h1>Simple Sidebar</h1>
+                        <h1 data-bind="text: currentPlace"></h1>
                         <div id="map"></div>
                     </div>
                 </div>

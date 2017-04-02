@@ -1,28 +1,54 @@
 var model = {
+    currentPlace: "Chelsea, New York",
     currentLocation: {
         lat: 40.74135,
         lng: -73.99802
     },
     places: [],
+    filteredPlaces: [],
     types: ['restaurant', 'store', 'bank', 'hospital'],
     selectedTypes: ['restaurant']
 }
 
-var viewModel = function () {
-    var self = this;
+var viewModel = {
 
-    self.toggle = ko.observable(true);
+    //search
+    //identify the first matching item by name
+    //viewModel.firstMatch = ko.computed(function() {
+    //    var search = this.search().toLowerCase();
+    //    if (!search) {
+    //        return null;
+    //    } else {
+    //        return ko.utils.arrayFirst(this.filteredItems(), function(item) {
+    //            return ko.utils.stringStartsWith(item.name().toLowerCase(), search);
+    //        });
+    //    }
+    //}, viewModel);
 
-    self.toggleMenu = function () {
-        self.toggle(!self.toggle());
-    };
+    currentPlace: ko.observable(model.currentPlace),
 
-    self.types = ko.observableArray(model.types);
+    toggle: ko.observable(true),
 
-    self.selectedTypes = ko.observableArray(model.selectedTypes);
+    toggleMenu: function () {
+        this.toggle(!this.toggle());
+    },
+
+    types: ko.observableArray(model.types),
+
+    selectedTypes: ko.observableArray(model.selectedTypes),
+
+    places: ko.observableArray(model.places),
+
+    showDetail: function (index) {
+        console.log(index);
+    },
+
+    hideDetail: function (index) {
+        console.log(index);
+    }
 };
 
-ko.applyBindings(new viewModel());
+ko.applyBindings(viewModel);
 
 var map;
 
@@ -72,21 +98,22 @@ function showPosition(position) {
 
     map.setCenter(model.currentLocation);
 
-//    var request = {
-//        location: model.currentLocation,
-//        radius: '500',
-//        types: ['restaurant']
-//    };
-//
-//    var places = new google.maps.places.PlacesService(map);
-//    places.nearbySearch(request, callback);
+    getPlaces();
 }
 
-//function callback(results, status) {
-//    if (status == google.maps.places.PlacesServiceStatus.OK) {
-//        console.log(results);
-//        //        for (var i = 0; i < results.length; i++) {
-//        //            var place = results[i];
-//        //        }
-//    }
-//}
+function getPlaces() {
+    var request = {
+        location: model.currentLocation,
+        radius: '500',
+        types: model.selectedTypes
+    };
+
+    var places = new google.maps.places.PlacesService(map);
+    places.nearbySearch(request, callback);
+}
+
+function callback(results, status) {
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+        viewModel.places(results);
+    }
+}
