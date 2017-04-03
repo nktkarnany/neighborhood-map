@@ -26,14 +26,7 @@
                     <a>Your Neighborhood</a>
                 </li>
             </ul>
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search" data-bind="value: query, valueUpdate: 'keyup'">
-                <div class="input-group-btn">
-                    <button class="btn btn-default">
-                        <i class="glyphicon glyphicon-filter"></i>
-                    </button>
-                </div>
-            </div>
+            <input type="text" class="form-control" placeholder="Search Restaurant" data-bind="value: query, valueUpdate: 'keyup'">
             <ul class="sidebar-nav" data-bind="foreach: places">
                 <li><a data-bind="text: name, event: {mouseover: $parent.showDetail.bind($data, $index()), mouseout: $parent.hideDetail.bind($data, $index())}"></a></li>
             </ul>
@@ -51,7 +44,6 @@
                     </div>
                 </div>
             </div>
-            <div data-bind="text: ko.toJSON($root)"></div>
         </div>
         <!-- /#page-content-wrapper -->
 

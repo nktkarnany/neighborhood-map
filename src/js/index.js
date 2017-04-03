@@ -21,24 +21,10 @@ function initMap() {
 
     map = new google.maps.Map(document.getElementById('map'), {
         center: model.currentLocation,
-        zoom: 14
+        zoom: 15
     });
 
     getCurrentLocation();
-
-    //    // Create a single latLng literal object.
-    //    var singleLatLng = {
-    //        lat: model.currentLocation.lat,
-    //        lng: model.currentLocation.lng
-    //    };
-    //    // TODO: Create a single marker appearing on initialize -
-    //    // Create it with the position of the singleLatLng,
-    //    // on the map, and give it your own title!
-    //    var marker = new google.maps.Marker({
-    //        position: singleLatLng,
-    //        map: map,
-    //        title: "This is a marker!!"
-    //    });
 
 }
 
@@ -80,15 +66,7 @@ function callback(results, status) {
 
 function initModel() {
 
-    model.places.forEach(function (place) {
-        markers.push(new google.maps.Marker({
-            position: {
-                lat: place.geometry.location.lat(),
-                lng: place.geometry.location.lng()
-            },
-            map: map
-        }));
-    });
+    renderAllMarkers();
 
     var viewModel = {
 
@@ -99,11 +77,11 @@ function initModel() {
         },
 
         showDetail: function (index) {
-            //        console.log(index);
+            markers[index].setAnimation(google.maps.Animation.BOUNCE);
         },
 
         hideDetail: function (index) {
-            //        console.log(index);
+            markers[index].setAnimation(null);
         },
 
         query: ko.observable(''),
@@ -124,4 +102,37 @@ function initModel() {
     };
 
     ko.applyBindings(viewModel);
+}
+
+function renderAllMarkers() {
+    google.maps.InfoWindow.prototype.isOpen = function () {
+        var map = this.getMap();
+        return (map !== null && typeof map !== "undefined");
+    }
+    model.places.forEach(function (place) {
+        var marker = new google.maps.Marker({
+            position: {
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng()
+            },
+            map: map
+        });
+        var infowindow = new google.maps.InfoWindow({
+            content: place.vicinity
+        });
+        marker.addListener('click', function () {
+            if (infowindow.isOpen()) {
+                infowindow.close(map, marker);
+                marker.setAnimation(null);
+            } else {
+                infowindow.open(map, marker);
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        });
+        infowindow.addListener('closeclick', function () {
+            infowindow.close(map, marker);
+            marker.setAnimation(null);
+        });
+        markers.push(marker);
+    });
 }
