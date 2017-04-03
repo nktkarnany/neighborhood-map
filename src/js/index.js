@@ -4,56 +4,11 @@ var model = {
         lat: 40.74135,
         lng: -73.99802
     },
-    places: [],
-    filteredPlaces: [],
-    types: ['restaurant', 'store', 'bank', 'hospital'],
-    selectedTypes: ['restaurant']
+    places: []
 }
 
-var viewModel = {
-
-    currentPlace: ko.observable(model.currentPlace),
-
-    toggle: ko.observable(true),
-
-    toggleMenu: function () {
-        this.toggle(!this.toggle());
-    },
-
-    types: ko.observableArray(model.types),
-
-    selectedTypes: ko.observableArray(model.selectedTypes),
-
-    places: ko.observableArray(model.places),
-
-    showDetail: function (index) {
-//        console.log(index);
-    },
-
-    hideDetail: function (index) {
-//        console.log(index);
-    },
-
-    query: ko.observable('')
-
-//    search: function(value) {
-//        console.log(value);
-//
-//        viewModel.places.removeAll();
-//
-//        model.places.forEach(function(place){
-//            if(place.name.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-//                viewModel.places.push(place);
-//              }
-//        });
-//    }
-};
-
-//viewModel.query.subscribe(viewModel.search);
-
-ko.applyBindings(viewModel);
-
 var map;
+var markers = [];
 
 // Function to initialize the map within the map div
 function initMap() {
@@ -92,6 +47,7 @@ function getCurrentLocation() {
         navigator.geolocation.getCurrentPosition(showPosition);
     } else {
         console.log("Geolocation is not supported by this browser.");
+        initModel();
     }
 }
 
@@ -108,7 +64,7 @@ function getPlaces() {
     var request = {
         location: model.currentLocation,
         radius: '500',
-        types: model.selectedTypes
+        types: ['restaurant']
     };
 
     var places = new google.maps.places.PlacesService(map);
@@ -118,13 +74,54 @@ function getPlaces() {
 function callback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         model.places = results;
-        viewModel.places(results);
-
-        viewModel.places = ko.computed(function () {
-            var search = viewModel.query().toLowerCase();
-            return ko.utils.arrayFilter(model.places, function (place) {
-                return place.name.toLowerCase().indexOf(search) >= 0;
-            });
-        });
+        initModel();
     }
+}
+
+function initModel() {
+
+    model.places.forEach(function (place) {
+        markers.push(new google.maps.Marker({
+            position: {
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng()
+            },
+            map: map
+        }));
+    });
+
+    var viewModel = {
+
+        toggle: ko.observable(true),
+
+        toggleMenu: function () {
+            this.toggle(!this.toggle());
+        },
+
+        showDetail: function (index) {
+            //        console.log(index);
+        },
+
+        hideDetail: function (index) {
+            //        console.log(index);
+        },
+
+        query: ko.observable(''),
+
+        places: ko.pureComputed(function () {
+            var search = viewModel.query().toLowerCase();
+            return ko.utils.arrayFilter(model.places, function (place, index) {
+                var match = place.name.toLowerCase().indexOf(search) >= 0;
+                if (match) {
+                    markers[index].setMap(map);
+                    return true;
+                } else {
+                    markers[index].setMap(null);
+                    return false;
+                }
+            });
+        })
+    };
+
+    ko.applyBindings(viewModel);
 }
