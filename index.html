@@ -28,7 +28,7 @@
             </ul>
             <input type="text" class="form-control" placeholder="Search Restaurant" data-bind="value: query, valueUpdate: 'keyup'">
             <ul class="sidebar-nav" data-bind="foreach: places">
-                <li><a data-bind="text: name, event: {mouseover: $parent.showDetail.bind($data, $index()), mouseout: $parent.hideDetail.bind($data, $index())}"></a></li>
+                <li><a data-bind="text: name, click: $parent.placeClicked"></a></li>
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -55,7 +55,7 @@
     <script src="dist/js/index.min.js"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" async defer></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBy8FLlJMTDb0ZDeYaezDM88XnSkouhbco&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBy8FLlJMTDb0ZDeYaezDM88XnSkouhbco&libraries=places&callback=initMap" onerror="googleError()" async defer></script>
 
 </body>
 
