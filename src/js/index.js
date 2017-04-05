@@ -67,6 +67,9 @@ function getPlaces() {
 
 function callback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
+        results.forEach(function (result, index) {
+            results[index].index = index;
+        });
         model.places = results;
         initModel(); //called if got list of all the places
     } else {
@@ -88,16 +91,15 @@ function initModel() {
             this.toggle(!this.toggle()); // on clicking on the toggle menu button animates the side bar menu out of the screen
         },
 
-        showDetail: function (index) { // called for mouse over event on a place in the list view
+        showDetail: function (i) { // called for mouse over event on a place in the list view
+            var index = viewModel.places()[i].index;
             markers[index].setAnimation(google.maps.Animation.BOUNCE);
             infoWindows[index].open(map, markers[index]);
         },
 
-        hideDetail: function (index) { // called for mouse out event on a place in the list view
+        hideDetail: function (i) { // called for mouse out event on a place in the list view
+            var index = viewModel.places()[i].index;
             markers[index].setAnimation(null);
-            var infowindow = new google.maps.InfoWindow({
-                content: model.places[index].vicinity
-            });
             infoWindows[index].close(map, markers[index]);
         },
 
@@ -126,7 +128,7 @@ function renderAllMarkers() {
         var map = this.getMap();
         return (map !== null && typeof map !== "undefined");
     }
-    model.places.forEach(function (place) {
+    model.places.forEach(function (place, index) {
 
         // generating markers for each place in places array model
         var marker = new google.maps.Marker({
@@ -139,35 +141,14 @@ function renderAllMarkers() {
 
         // creating and saving info windows into an array
         var infowindow = new google.maps.InfoWindow({
-            content: place.vicinity
+            content: place.name
         });
         infowindow.addListener('closeclick', function () {
             infowindow.close(map, marker);
             marker.setAnimation(null);
         });
 
-        // getting the data for info windows from wikipedia api
-        $.ajax({
-            url: 'http://en.wikipedia.org/w/api.php?action=opensearch&search='+place.name,
-            type: 'get',
-            dataType:"jsonp",
-
-            success: function(response){
-                var link = response[3][0];
-
-                if(link){
-                    infowindow.setContent("<a href='"+ link + "'>" + link + "</a>");
-                } else {
-                    infowindow.setContent("No Wiki!!");
-                }
-
-                infoWindows.push(infowindow);
-            },
-            error: function() {
-                infowindow.setContent("Sorry!! Lost connection");
-                infoWindows.push(infowindow);
-            }
-        });
+        infoWindows.push(infowindow);
 
         // adding a click listener on the marker to display the info window
         marker.addListener('click', function () {
@@ -181,4 +162,34 @@ function renderAllMarkers() {
         });
         markers.push(marker);
     });
+    updateInfoWindows(infoWindows);
+}
+
+var updateInfoWindows = function (infos) {
+
+    infos.forEach(function (info, index) {
+
+        // getting the data for info windows from wikipedia api
+        $.ajax({
+            url: 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + info.getContent(),
+            type: 'get',
+            dataType: "jsonp",
+
+            success: function (response) {
+                var link = response[3][0];
+
+                if (link) {
+                    infoWindows[index].setContent("<a href='" + link + "'>" + link + "</a>");
+                } else {
+                    infoWindows[index].setContent("No Wiki!!");
+                }
+
+            },
+            error: function () {
+                infowindow[index].setContent("Sorry!! Lost connection");
+            }
+        });
+
+    });
+
 }
